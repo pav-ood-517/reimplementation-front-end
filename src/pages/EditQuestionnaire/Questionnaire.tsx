@@ -149,7 +149,7 @@ const Questionnaire = () => {
 
   return (
     <div>
-      <div className="container">
+      <div>
         <h1 className="mt-4">{sample_questionnaire.title}</h1>
         <div className="row m-2">
           <div className="col-6">
@@ -361,7 +361,6 @@ const Questionnaire = () => {
         <div>
           <div>
             <a
-             
               style={{ color: "#b28b66", textDecoration: "none", cursor: "pointer" }}
               onClick={() => setShowImportModal(true)}
             >
