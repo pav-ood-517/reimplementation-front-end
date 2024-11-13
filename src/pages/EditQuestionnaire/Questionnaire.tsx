@@ -5,22 +5,23 @@ import ExportModal from "./ExportModal";
 interface ImportedData {
   title: string;
   data: Array<{
-    seq: number;
-    question: string;
-    type: string;
-    weight: number;
-    text_area_size: string;
-    max_label: string;
-    min_label: string;
+    sequence: number; // defines the order of questions
+    question: string; // the question itself
+    type: string; // type of question which can be Criterion, DropDown, multiple choice etc..
+    weight: number; // defines the weight of the question
+    text_area_size: string; // size of the text area in rows and columns
+    max_label: string;  // the maximum value, differs according to the type
+    min_label: string; // the minimum value, differs according to the type
   }>;
 }
 
 const Questionnaire = () => {
-  const sample_questionnaire = {
+// Sample data for initial questionnaire
+  const initialQuestionnaire = {
     title: "Edit Teammate Review",
     data: [
       {
-        seq: 1.0,
+        sequence: 1.0,
         question: "How many times was this person late to meetings?",
         type: "Criterion",
         weight: 1,
@@ -29,7 +30,7 @@ const Questionnaire = () => {
         min_label: "almost always",
       },
       {
-        seq: 2.0,
+        sequence: 2.0,
         question: "How many times did this person not show up?",
         type: "Criterion",
         weight: 1,
@@ -38,7 +39,7 @@ const Questionnaire = () => {
         min_label: "almost always",
       },
       {
-        seq: 3.0,
+        sequence: 3.0,
         question: "How much did this person offer to do in this project?",
         type: "Criterion",
         weight: 1,
@@ -47,7 +48,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
-        seq: 4.0,
+        sequence: 4.0,
         question: "What fraction of the work assigned to this person did s(he) do?",
         type: "Criterion",
         weight: 1,
@@ -56,7 +57,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
-        seq: 4.5,
+        sequence: 4.5,
         question: "Did this person do assigned work on time?",
         type: "Criterion",
         weight: 1,
@@ -65,7 +66,7 @@ const Questionnaire = () => {
         min_label: "never",
       },
       {
-        seq: 5.0,
+        sequence: 5.0,
         question: "How much initiative did this person take on this project?",
         type: "Criterion",
         weight: 1,
@@ -74,7 +75,7 @@ const Questionnaire = () => {
         min_label: "total deadbeat",
       },
       {
-        seq: 6.0,
+        sequence: 6.0,
         question: "Did this person try to avoid doing any task that was necessary?",
         type: "Criterion",
         weight: 1,
@@ -83,7 +84,7 @@ const Questionnaire = () => {
         min_label: "absolutely",
       },
       {
-        seq: 7.0,
+        sequence: 7.0,
         question: "How many of the useful ideas did this person come up with?",
         type: "Criterion",
         weight: 1,
@@ -92,7 +93,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
-        seq: 8.0,
+        sequence: 8.0,
         question: "What fraction of the coding did this person do?",
         type: "Criterion",
         weight: 1,
@@ -101,7 +102,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
-        seq: 9.0,
+        sequence: 9.0,
         question: "What fraction of the documentation did this person write?",
         type: "Criterion",
         weight: 1,
@@ -110,7 +111,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
-        seq: 11.0,
+        sequence: 11.0,
         question: "How important is this person to the team?",
         type: "Criterion",
         weight: 1,
@@ -118,31 +119,34 @@ const Questionnaire = () => {
         max_label: "indispensable",
         min_label: "redundant",
       },
+      // ... additional questions omitted for brevity
     ],
   };
+  // State hooks for questionnaire settings
   const [minScore, setMinScore] = useState(0);
   const [maxScore, setMaxScore] = useState(5);
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isReviewPrivate, setIsReviewPrivate] = useState(false);
 
-  const [questionnaireData, setQuestionnaireData] = useState(sample_questionnaire);
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [showExportModal, setShowExportModal] = useState(false);
+  // State hooks for questionnaire data and modals
+  const [questionnaireData, setQuestionnaireData] = useState(initialQuestionnaire);
+  const [isImportModalVisible, setImportModalVisible] = useState(false);
+  const [isExportModalVisible, setExportModalVisible] = useState(false);
 
   // Function to export questionnaire data
   const exportQuestionnaire = () => {
     const dataToExport = JSON.stringify(questionnaireData);
     const blob = new Blob([dataToExport], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "questionnaire.json";
-    a.click();
+    const downloadLink = document.createElement("a");
+    downloadLink.href = url;
+    downloadLink.download = "questionnaire.json";
+    downloadLink.click();
 
     URL.revokeObjectURL(url);
   };
 
-  // Function to handle imported data
-  const handleFileChange = (importedData: ImportedData) => {
+  // Function to handle imported data to update questionnaire
+  const handleImportData = (importedData: ImportedData) => {
     setQuestionnaireData(importedData);
   };
 
@@ -150,7 +154,8 @@ const Questionnaire = () => {
   return (
     <div>
       <div>
-        <h1 className="mt-4">{sample_questionnaire.title}</h1>
+        <h1 className="mt-4">{initialQuestionnaire.title}</h1>
+        {/* Min Score Input */}
         <div className="row m-2">
           <div className="col-6">
             Min item score:
@@ -163,6 +168,7 @@ const Questionnaire = () => {
             ></input>
           </div>
         </div>
+        {/* Max Score Input */}
         <div className="row m-2">
           <div className="col-6">
             Max item score:
@@ -175,16 +181,18 @@ const Questionnaire = () => {
             ></input>
           </div>
         </div>
+        {/* Privacy Toggle */}
         <div className="row m-2">
           <div className="col-6">
             Is this Teammate review private:{' '} 
             <input
               type="checkbox"
-              checked={isPrivate}
-              onChange={() => setIsPrivate(!isPrivate)}
+              checked={isReviewPrivate}
+              onChange={() => setIsReviewPrivate(!isReviewPrivate)}
             />
           </div>
         </div>
+        {/* Update Parameters Button */}
         <div className="row m-2">
           <div className="col-6">
             <button
@@ -197,9 +205,10 @@ const Questionnaire = () => {
           </div>
         </div>
         <hr />
-             
+
+        {/* Display questionnaire items */}
         <div className="row m-2">
-          <div className="col-1">Seq</div>
+          <div className="col-1">sequence</div>
           <div className="col-3">Question</div>
           <div className="col-1">Type</div>
           <div className="col-1">Weight</div>
@@ -208,7 +217,8 @@ const Questionnaire = () => {
           <div className="col-2">Min_label</div>
           <div className="col-1">Action</div>
         </div>
-        {sample_questionnaire.data.map((item) => {
+        {/* Iterate over questions */}
+        {initialQuestionnaire.data.map((item) => {
           return (
             <div className="row m-2">
               <div className="col-1" >
@@ -216,7 +226,7 @@ const Questionnaire = () => {
                   className="form-control"
                   style={{ borderColor: "black",width: "50px" }}
                   type="text"
-                  value={item.seq}
+                  value={item.sequence}
                   disabled
                 />
               </div>
@@ -294,6 +304,7 @@ const Questionnaire = () => {
           );
         })}
         <br /> 
+        {/* Add new question inputs */}
         <div className="row m-2">
         <br /> 
         <div className="col-1">
@@ -335,6 +346,7 @@ const Questionnaire = () => {
           </div>
         </div>
         <br /> 
+        {/* Save all questions button */}
         <div className="row m-2">
         <div className="col-2">
           <button
@@ -358,34 +370,35 @@ const Questionnaire = () => {
         </div>
         </div>
         <hr />
+        {/* Import/Export Section */}
         <div>
           <div>
-            <a
-              style={{ color: "#b28b66", textDecoration: "none", cursor: "pointer" }}
-              onClick={() => setShowImportModal(true)}
+            <button
+              style={{ color: "#b28b66"}}
+              onClick={() => setImportModalVisible(true)}
             >
               Import Questionnaire
-            </a>{" "}
+            </button>{" "}
             |
-            <a
+            <button
              
-              style={{ color: "#b28b66", textDecoration: "none", cursor: "pointer" }}
-              onClick={() => setShowExportModal(true)}
+              style={{ color: "#b28b66" }}
+              onClick={() => setExportModalVisible(true)}
             >
               Export Questionnaire
-            </a>
+            </button>
           </div>
 
           {/* Render import and export modals conditionally */}
-          {showImportModal && (
+          {isImportModalVisible && (
             <ImportModal
-              onClose={() => setShowImportModal(false)}
-              onImport={handleFileChange}
+              onClose={() => setImportModalVisible(false)}
+              onImport={handleImportData}
             />
           )}
-          {showExportModal && (
+          {isExportModalVisible && (
             <ExportModal
-              onClose={() => setShowExportModal(false)}
+              onClose={() => setExportModalVisible(false)}
               onExport={exportQuestionnaire}
             />
           )}
