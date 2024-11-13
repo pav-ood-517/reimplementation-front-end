@@ -14,6 +14,7 @@ interface ImportedData {
     min_label: string; // the minimum value, differs according to the type
   }>;
 }
+const questionTypeArray = ['Criterion','Scale','Cake','Dropdown','Checkbox','TextArea','TextField','UploadFile','SectionHeader','TableHeader','ColumnHeader'];
 
 const Questionnaire = () => {
 // Sample data for initial questionnaire
@@ -244,17 +245,12 @@ const Questionnaire = () => {
                 style={{ borderColor: "black" }}
                 defaultValue = {item.type}
               >
-                <option value="Criterion">Criterion</option>
-                <option value="Scale">Scale</option>
-                <option value="Cake">Cake</option>
-                <option value="Dropdown">Dropdown</option>
-                <option value="Checkbox">Checkbox</option>
-                <option value="TextArea">TextArea</option>
-                <option value="TextField">TextField</option>
-                <option value="UploadFile">UploadFile</option>
-                <option value="SectionHeader">SectionHeader</option>
-                <option value="TableHeader">TableHeader</option>
-                <option value="ColumnHeader">ColumnHeader</option>
+                {questionTypeArray.map((questionType) => 
+                    <option key={questionType} value={questionType}>
+                      {questionType}
+                    </option>
+                  )
+                }
               </select>
               </div>
               <div className="col-1">
