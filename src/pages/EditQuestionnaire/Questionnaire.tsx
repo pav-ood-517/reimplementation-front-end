@@ -7,14 +7,16 @@ interface ImportedData {
   data: Array<{
     sequence: number; // defines the order of questions
     question: string; // the question itself
-    type: string; // type of question which can be Criterion, DropDown, multiple choice etc..
+    type: string; // type of item which can be Criterion, DropDown, multiple choice etc..
     weight: number; // defines the weight of the question
     text_area_size: string; // size of the text area in rows and columns
     max_label: string;  // the maximum value, differs according to the type
     min_label: string; // the minimum value, differs according to the type
   }>;
 }
-const questionTypeArray = ['Criterion','Scale','Cake','Dropdown','Checkbox','TextArea','TextField','UploadFile','SectionHeader','TableHeader','ColumnHeader'];
+
+// Various Types of items available 
+const itemTypeArray = ['Criterion','Scale','Cake','Dropdown','Checkbox','TextArea','TextField','UploadFile','SectionHeader','TableHeader','ColumnHeader'];
 
 const Questionnaire = () => {
 // Sample data for initial questionnaire
@@ -222,6 +224,7 @@ const Questionnaire = () => {
         {initialQuestionnaire.data.map((item) => {
           return (
             <div className="row my-3"  style={{ border:"2px solid gray", padding:"15px",borderRadius:"7px"}}>
+              {/* Sequence number */}
               <div className="col-1">
                 <input
                   className="form-control"
@@ -231,6 +234,7 @@ const Questionnaire = () => {
                   disabled
                 />
               </div>
+              {/* The Question Text field */}
               <div className="col-2">
                 <textarea
                   className="form-control"
@@ -241,20 +245,23 @@ const Questionnaire = () => {
                   value={item.question}
                 ></textarea>
               </div>
+              {/* The Item type dropdown */}
               <div className="col-2">
               <select
                 className="form-select"
                 style={{ borderColor: "black"}}
                 defaultValue = {item.type}
               >
-                {questionTypeArray.map((questionType) => 
-                    <option key={questionType} value={questionType}>
-                      {questionType}
+                {/* Iterating item array for getting all the various type of items as options to select from dropdown */}
+                {itemTypeArray.map((itemType) => 
+                    <option key={itemType} value={itemType}>
+                      {itemType}
                     </option>
                   )
                 }
               </select>
               </div>
+              {/* The weight of the item chosen */}
               <div className="col-1">
                 <input
                   className="form-control"
@@ -265,6 +272,7 @@ const Questionnaire = () => {
                   value={item.weight}
                 ></input>
               </div>
+              {/* The text-area size of the item being added */}
               <div className="col-1">
                 <input
                   className="form-control"
@@ -274,6 +282,7 @@ const Questionnaire = () => {
                   defaultValue="80, 1"
                 ></input>
               </div>
+              {/* The maximum label you want to attach to that item */}
               <div className="col-2">
                 <input
                   className="form-control"
@@ -282,6 +291,7 @@ const Questionnaire = () => {
                   value={item.max_label}
                 ></input>
               </div>
+              {/* The minimum label you want to attach to that item */}
               <div className="col-2">
                 <input
                   className="form-control"
@@ -289,7 +299,8 @@ const Questionnaire = () => {
                   type="text"
                   value={item.min_label}
                 ></input>
-              </div>              
+              </div>  
+              {/* Remove item button */}            
               <div className="col-1">
               <button
                 type="button"
@@ -303,7 +314,7 @@ const Questionnaire = () => {
           );
         })}
         <br /> 
-        {/* Add new question inputs */}
+        {/* Add new item inputs */}
         <div className="row m-2">
         <br /> 
         <div className="col-1">
@@ -316,9 +327,10 @@ const Questionnaire = () => {
         </div>
         <div className="col-2">
             <select className="form-select">
-            {questionTypeArray.map((questionType) => 
-              <option key={questionType} value={questionType}>
-                {questionType}
+            {/* Iterating item array for getting all the various type of items as options to select from dropdown */}
+            {itemTypeArray.map((itemType) => 
+              <option key={itemType} value={itemType}>
+                {itemType}
               </option>
               )
             }
@@ -329,6 +341,7 @@ const Questionnaire = () => {
         question(s)
         </p>
         </div>
+        {/* Add a new question button */}
         <div className="col-2">
           <button
               type="button"
@@ -340,8 +353,8 @@ const Questionnaire = () => {
           </div>
         </div>
         <br /> 
-        {/* Save all questions button */}
         <div className="row m-2">
+        {/* Save all questions button */}
           <div className="col-2">
             <button
               type="button"
@@ -351,6 +364,7 @@ const Questionnaire = () => {
               Save all questions
             </button>
           </div>
+        {/* Edit/View Advice button */}
           <div className="col-2">
             <button
               type="button"
@@ -364,6 +378,7 @@ const Questionnaire = () => {
         <hr />
         {/* Import/Export Section */}
         <div className="row m-2">
+          {/*  button  for Importing Questionnaire*/}
           <div className="col-2">
               <button
                 style={{ color: "#b28b66",padding:"8px",borderRadius:"6px" }}
@@ -372,16 +387,16 @@ const Questionnaire = () => {
                 Import Questionnaire
               </button>{" "}
             </div>
+          {/*  button  for Importing Questionnaire*/}
+          <div className="col-2">
+            <button
             
-            <div className="col-2">
-              <button
-              
-                style={{ color: "#b28b66",padding:"8px",borderRadius:"6px" }}
-                onClick={() => setExportModalVisible(true)}
-              >
-                Export Questionnaire
-              </button> 
-            </div>
+              style={{ color: "#b28b66",padding:"8px",borderRadius:"6px" }}
+              onClick={() => setExportModalVisible(true)}
+            >
+              Export Questionnaire
+            </button> 
+          </div>
 
           {/* Render import and export modals conditionally */}
           {isImportModalVisible && (
