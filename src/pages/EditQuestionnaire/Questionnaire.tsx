@@ -153,12 +153,12 @@ const Questionnaire = () => {
 
 
   return (
-    <div>
+    <div className="container">
       <div>
         <h1 className="mt-4">{initialQuestionnaire.title}</h1>
         {/* Min Score Input */}
         <div className="row m-2">
-          <div className="col-6">
+          <div className="col-2">
             Min item score:
             <input
               className="form-control"
@@ -171,7 +171,7 @@ const Questionnaire = () => {
         </div>
         {/* Max Score Input */}
         <div className="row m-2">
-          <div className="col-6">
+          <div className="col-2">
             Max item score:
             <input
               className="form-control"
@@ -194,7 +194,7 @@ const Questionnaire = () => {
           </div>
         </div>
         {/* Update Parameters Button */}
-        <div className="row m-2">
+        <div className="row my-2">
           <div className="col-6">
             <button
               type="button"
@@ -208,30 +208,30 @@ const Questionnaire = () => {
         <hr />
 
         {/* Display questionnaire items */}
-        <div className="row m-2">
+        <div className="row my-2">
           <div className="col-1">sequence</div>
-          <div className="col-3">Question</div>
-          <div className="col-1">Type</div>
+          <div className="col-4">Question</div>
+          <div className="col-2">Type</div>
           <div className="col-1">Weight</div>
           <div className="col-1">Text_area_size</div>
-          <div className="col-2">Max_label</div>
-          <div className="col-2">Min_label</div>
+          <div className="col-1">Max_label</div>
+          <div className="col-1">Min_label</div>
           <div className="col-1">Action</div>
         </div>
         {/* Iterate over questions */}
         {initialQuestionnaire.data.map((item) => {
           return (
-            <div className="row m-2">
+            <div className="row my-2">
               <div className="col-1" >
                 <input
                   className="form-control"
-                  style={{ borderColor: "black",width: "50px" }}
+                  style={{ borderColor: "black",width: "40px" }}
                   type="text"
                   value={item.sequence}
                   disabled
                 />
               </div>
-              <div className="col-3">
+              <div className="col-4">
                 <input
                   className="form-control"
                   style={{ borderColor: "black" }}
@@ -239,7 +239,7 @@ const Questionnaire = () => {
                   value={item.question}
                 ></input>
               </div>
-              <div className="col-1">
+              <div className="col-2">
               <select
                 className="form-select"
                 style={{ borderColor: "black" }}
@@ -272,7 +272,7 @@ const Questionnaire = () => {
                   defaultValue="80, 1"
                 ></input>
               </div>
-              <div className="col-2">
+              <div className="col-1">
                 <input
                   className="form-control"
                   style={{ borderColor: "black" }}
@@ -280,7 +280,7 @@ const Questionnaire = () => {
                   value={item.max_label}
                 ></input>
               </div>
-              <div className="col-2">
+              <div className="col-1">
                 <input
                   className="form-control"
                   style={{ borderColor: "black" }}
