@@ -93,4 +93,22 @@ describe('Questionnaire Component', () => {
     // Verify if import modal opens
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
+
+  test("renders title and main controls", () => {
+    render(<Questionnaire />);
+
+    expect(screen.getByText("Edit Teammate Review")).toBeInTheDocument();
+    expect(screen.getByLabelText(/Min item score:/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Max item score:/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Is this Teammate review private:/i)).toBeInTheDocument();
+  });
+
+  test("renders initial items", () => {
+    render(<Questionnaire />);
+
+    // Check for specific question text
+    expect(screen.getByText("How many times was this person late to meetings?")).toBeInTheDocument();
+    expect(screen.getAllByRole("textbox").length).toBeGreaterThan(0); // Ensure textboxes for questions are rendered
+  });
+
 });
