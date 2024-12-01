@@ -111,4 +111,87 @@ describe('Questionnaire Component', () => {
     expect(screen.getAllByRole("textbox").length).toBeGreaterThan(0); // Ensure textboxes for questions are rendered
   });
 
+  test("removes a question", () => {
+    render(<Questionnaire />);
+    const removeButton = screen.getAllByRole("button", { name: /Remove/i })[0];
+
+    fireEvent.click(removeButton);
+
+    const questions = screen.getAllByRole("textbox");
+    expect(questions.length).toBeLessThan(11); // Assuming initially 11 questions
+  });
+
+  test("opens and closes import modal", () => {
+    render(<Questionnaire />);
+    const importButton = screen.getByRole("button", { name: /Import Questionnaire/i });
+
+    fireEvent.click(importButton);
+    expect(screen.getByRole("dialog")).toBeInTheDocument(); // Check modal visibility
+
+    const closeButton = screen.getByRole("button", { name: /Close/i });
+    fireEvent.click(closeButton);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument(); // Modal should disappear
+  });
+
+  test("opens and closes export modal", () => {
+    render(<Questionnaire />);
+    const exportButton = screen.getByRole("button", { name: /Export Questionnaire/i });
+
+    fireEvent.click(exportButton);
+    expect(screen.getByRole("dialog")).toBeInTheDocument(); // Check modal visibility
+
+    const closeButton = screen.getByRole("button", { name: /Close/i });
+    fireEvent.click(closeButton);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument(); // Modal should disappear
+  });
+
+  test("updates question details", () => {
+    render(<Questionnaire />);
+    const questionTextarea = screen.getAllByRole("textbox")[0];
+
+    fireEvent.change(questionTextarea, { target: { value: "Updated Question Text" } });
+    expect(questionTextarea).toHaveValue("Updated Question Text");
+  });
+
+  test("updates item type dropdown", () => {
+    render(<Questionnaire />);
+    const dropdown = screen.getAllByRole("combobox")[0];
+
+    fireEvent.change(dropdown, { target: { value: "Dropdown" } });
+    expect(dropdown).toHaveValue("Dropdown");
+  });
+
+  test("renders correctly with empty questionnaire data", () => {
+    render(<Questionnaire />);
+    // Mock an empty questionnaire
+    const emptyData = { title: "", data: [] };
+    fireEvent.change(screen.getByRole("textbox", { name: /Title/i }), { target: { value: emptyData.title } });
+  
+    expect(screen.queryAllByRole("textbox").length).toBe(1); // Only title input should be visible
+  });
+
+  test("removes all questions and displays appropriate message", () => {
+    render(<Questionnaire />);
+  
+    const removeButtons = screen.getAllByRole("button", { name: /Remove/i });
+    removeButtons.forEach((btn) => fireEvent.click(btn));
+  
+    expect(screen.getByText(/No questions available/i)).toBeInTheDocument(); // Assuming a placeholder is displayed for empty state
+  });
+
+  test("detects duplicate sequence numbers when adding a question", () => {
+    render(<Questionnaire />);
+  
+    const addButton = screen.getByRole("button", { name: /Add Question/i });
+    fireEvent.click(addButton);
+  
+    const sequenceInput = screen.getAllByRole("textbox")[0]; // Assume the sequence field
+    fireEvent.change(sequenceInput, { target: { value: "1.0" } }); // Duplicate sequence
+  
+    fireEvent.click(addButton);
+  
+    expect(screen.getByText(/Duplicate sequence number detected/i)).toBeInTheDocument(); // Error message for duplicates
+  });
+  
+
 });
