@@ -210,7 +210,7 @@ const Questionnaire = () => {
         <hr />
 
         {/* Display questionnaire items */}
-        <div className="row my-2" style={{paddingLeft:"15px",paddingRight:"15px"}}>
+        <div className="row my-2" style={{paddingLeft:"15px",paddingRight:"15px",textAlign:"center"}}>
           <h6 className="col-1">Sequence</h6>
           <h6 className="col-2">Question</h6>
           <h6 className="col-2">Type</h6>
@@ -218,7 +218,7 @@ const Questionnaire = () => {
           <h6 className="col-1">Text_area_size</h6>
           <h6 className="col-2">Max_label</h6>
           <h6 className="col-2">Min_label</h6>
-          <h5 className="col-1">Action</h5>
+          <h6 className="col-1">Action</h6>
         </div>
         {/* Iterate over questions */}
         {initialQuestionnaire.data.map((item) => {
@@ -240,7 +240,7 @@ const Questionnaire = () => {
                   className="form-control"
                   style={{ borderColor: "black" }}
                   // type="text"
-                  rows={3}
+                  rows={item.question.length>=55?3:2}
                   // cols={20}
                   value={item.question}
                 ></textarea>
