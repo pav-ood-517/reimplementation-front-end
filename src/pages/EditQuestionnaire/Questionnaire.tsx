@@ -146,9 +146,8 @@ const Questionnaire = () => {
     setQuestionnaireData(importedData);
   };
 
-  const handleAddQuestion = ()=> {
-    // TODO: Implement adding a new question to the questionnaire data
-    // Example:
+  // Function to add a new item to the questionnaire
+  const handleAddItem = ()=> {
     let updatedData = questionnaireData.data;
     for (let i=0; i< parseInt(itemQuantity); i++) {
     const newQuestion = {
@@ -165,14 +164,14 @@ const Questionnaire = () => {
   setQuestionnaireData({...questionnaireData, data: updatedData });
   }
 
+  // function to handle the dropdown change event
   const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedItemType(event.target.value); // Safely access the value
   };
-  
 
-  const handleRemoveQuestion = (seq: number)=>{
+  // function for removing the item
+  const handleRemoveItem = (seq: number)=>{
     let updatedData = questionnaireData.data.filter(q=> +q.sequence!== seq);
-    console.log(updatedData);
     updatedData = updatedData.map((q) => ({
       ...q,
       sequence: q.sequence > seq ? q.sequence - 1 : q.sequence, // Adjust sequence for questions after the removed one
@@ -331,7 +330,7 @@ const Questionnaire = () => {
                 type="button"
                 className="btn btn-light"
                 style={{border:"1px solid gray"}}
-                onClick={()=> handleRemoveQuestion(item.sequence)}
+                onClick={()=> handleRemoveItem(item.sequence)}
               >
                 Remove
               </button>  
@@ -373,7 +372,7 @@ const Questionnaire = () => {
               type="button"
               style={{ backgroundColor: "#4d8ac0", borderColor: "#4d8ac0" ,  marginBottom: '20px' }}
               className="btn btn-primary"
-              onClick={handleAddQuestion}
+              onClick={handleAddItem}
             >
               Add Question
             </button>   
