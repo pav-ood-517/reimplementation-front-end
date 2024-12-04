@@ -60,15 +60,6 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
-        sequence: 4.5,
-        question: "Did this person do assigned work on time?",
-        type: "Criterion",
-        weight: 1,
-        text_area_size: "50, 30",
-        max_label: "always",
-        min_label: "never",
-      },
-      {
         sequence: 5.0,
         question: "How much initiative did this person take on this project?",
         type: "Criterion",
@@ -114,7 +105,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
-        sequence: 11.0,
+        sequence: 10.0,
         question: "How important is this person to the team?",
         type: "Criterion",
         weight: 1,
@@ -126,6 +117,8 @@ const Questionnaire = () => {
     ],
   };
   // State hooks for questionnaire settings
+  const [selectedItemType, setSelectedItemType] = useState(''); // State to track selected value
+  const [itemQuantity,setItemQuantity] = useState("1");
   const [minScore, setMinScore] = useState(0);
   const [maxScore, setMaxScore] = useState(5);
   const [isReviewPrivate, setIsReviewPrivate] = useState(false);
@@ -153,11 +146,43 @@ const Questionnaire = () => {
     setQuestionnaireData(importedData);
   };
 
+  const handleAddQuestion = ()=> {
+    // TODO: Implement adding a new question to the questionnaire data
+    // Example:
+    let updatedData = questionnaireData.data;
+    for (let i=0; i< parseInt(itemQuantity); i++) {
+    const newQuestion = {
+      sequence: questionnaireData.data.length + 1,
+      question: "Type your question",
+      type: selectedItemType,
+      weight: 1,
+      text_area_size: "50, 30",
+      max_label: "max value",
+      min_label: "min value"
+    };
+    updatedData.push(newQuestion);
+  }
+  setQuestionnaireData({...questionnaireData, data: updatedData });
+  }
 
+  const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedItemType(event.target.value); // Safely access the value
+  };
+  
+
+  const handleRemoveQuestion = (seq: number)=>{
+    let updatedData = questionnaireData.data.filter(q=> +q.sequence!== seq);
+    console.log(updatedData);
+    updatedData = updatedData.map((q) => ({
+      ...q,
+      sequence: q.sequence > seq ? q.sequence - 1 : q.sequence, // Adjust sequence for questions after the removed one
+    }));
+    setQuestionnaireData({...questionnaireData, data: [...updatedData] });
+  }
   return (
     <div className="container">
       <div>
-        <h1 className="mt-4">{initialQuestionnaire.title}</h1>
+        <h1 className="mt-4">{questionnaireData.title}</h1>
         {/* Min Score Input */}
         <div className="row m-2">
           <div className="col-2">
@@ -221,9 +246,9 @@ const Questionnaire = () => {
           <h6 className="col-1">Action</h6>
         </div>
         {/* Iterate over questions */}
-        {initialQuestionnaire.data.map((item) => {
+        {questionnaireData.data.map((item) => {
           return (
-            <div className="row my-3"  style={{ border:"2px solid gray", padding:"15px",borderRadius:"7px"}}>
+            <div className="row my-3" key={item.sequence}  style={{ border:"2px solid gray", padding:"15px",borderRadius:"7px"}}>
               {/* Sequence number */}
               <div className="col-1">
                 <input
@@ -242,7 +267,7 @@ const Questionnaire = () => {
                   // type="text"
                   rows={item.question.length>=55?3:2}
                   // cols={20}
-                  value={item.question}
+                  defaultValue={item.question}
                 ></textarea>
               </div>
               {/* The Item type dropdown */}
@@ -269,7 +294,7 @@ const Questionnaire = () => {
                   type="number"
                   placeholder="1"
                   pattern="[0-9]*" // Only allow numeric values
-                  value={item.weight}
+                  defaultValue={item.weight}
                 ></input>
               </div>
               {/* The text-area size of the item being added */}
@@ -278,8 +303,8 @@ const Questionnaire = () => {
                   className="form-control"
                   style={{ borderColor: "black",width:"70px" }}
                   type="text"
-                  value={item.text_area_size}
-                  defaultValue="80, 1"
+                  // value={item.text_area_size}
+                  defaultValue={item.text_area_size}
                 ></input>
               </div>
               {/* The maximum label you want to attach to that item */}
@@ -288,7 +313,7 @@ const Questionnaire = () => {
                   className="form-control"
                   style={{ borderColor: "black" }}
                   type="text"
-                  value={item.max_label}
+                  defaultValue={item.max_label}
                 ></input>
               </div>
               {/* The minimum label you want to attach to that item */}
@@ -297,7 +322,7 @@ const Questionnaire = () => {
                   className="form-control"
                   style={{ borderColor: "black" }}
                   type="text"
-                  value={item.min_label}
+                  defaultValue={item.min_label}
                 ></input>
               </div>  
               {/* Remove item button */}            
@@ -306,6 +331,7 @@ const Questionnaire = () => {
                 type="button"
                 className="btn btn-light"
                 style={{border:"1px solid gray"}}
+                onClick={()=> handleRemoveQuestion(item.sequence)}
               >
                 Remove
               </button>  
@@ -318,7 +344,7 @@ const Questionnaire = () => {
         <div className="row m-2">
         <br /> 
         <div className="col-1">
-            <input className="form-control" type="text" placeholder="1"></input>
+            <input className="form-control" type="text" placeholder={itemQuantity} onChange={(e)=> setItemQuantity(e.target.value)}></input>
         </div>
         <div className="col-1">
         <p style={{ fontSize: "18px", paddingLeft: 0, paddingRight: 0 }}>
@@ -326,7 +352,7 @@ const Questionnaire = () => {
         </p>
         </div>
         <div className="col-2">
-            <select className="form-select">
+            <select className="form-select"  onChange={handleDropdownChange} defaultValue='Criterion'>
             {/* Iterating item array for getting all the various type of items as options to select from dropdown */}
             {itemTypeArray.map((itemType) => 
               <option key={itemType} value={itemType}>
@@ -347,6 +373,7 @@ const Questionnaire = () => {
               type="button"
               style={{ backgroundColor: "#4d8ac0", borderColor: "#4d8ac0" ,  marginBottom: '20px' }}
               className="btn btn-primary"
+              onClick={handleAddQuestion}
             >
               Add Question
             </button>   
@@ -355,7 +382,7 @@ const Questionnaire = () => {
         <br /> 
         <div className="row m-2">
         {/* Save all questions button */}
-          <div className="col-2">
+          {/* <div className="col-2">
             <button
               type="button"
               style={{ backgroundColor: "#4d8ac0", borderColor: "#4d8ac0" }}
@@ -363,9 +390,9 @@ const Questionnaire = () => {
             >
               Save all questions
             </button>
-          </div>
+          </div> */}
         {/* Edit/View Advice button */}
-          <div className="col-2">
+          {/* <div className="col-2">
             <button
               type="button"
               style={{ borderColor: "black" }}
@@ -373,7 +400,7 @@ const Questionnaire = () => {
             >
               Edit/View Advice
             </button>
-          </div>
+          </div> */}
         </div>
         <hr />
         {/* Import/Export Section */}
