@@ -5,6 +5,7 @@ import ExportModal from "./ExportModal";
 interface ImportedData {
   title: string;
   data: Array<{
+    id: number,
     sequence: number; // defines the order of questions
     question: string; // the question itself
     type: string; // type of item which can be Criterion, DropDown, multiple choice etc..
@@ -24,6 +25,7 @@ const Questionnaire = () => {
     title: "Edit Teammate Review",
     data: [
       {
+        id:1,
         sequence: 1.0,
         question: "How many times was this person late to meetings?",
         type: "Criterion",
@@ -33,6 +35,7 @@ const Questionnaire = () => {
         min_label: "almost always",
       },
       {
+        id:2,
         sequence: 2.0,
         question: "How many times did this person not show up?",
         type: "Criterion",
@@ -42,6 +45,7 @@ const Questionnaire = () => {
         min_label: "almost always",
       },
       {
+        id:3,
         sequence: 3.0,
         question: "How much did this person offer to do in this project?",
         type: "Criterion",
@@ -51,7 +55,8 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
-        sequence: 4.0,
+        id:4,
+        sequence: 4.5,
         question: "What fraction of the work assigned to this person did s(he) do?",
         type: "Criterion",
         weight: 1,
@@ -60,6 +65,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
+        id:5,
         sequence: 5.0,
         question: "How much initiative did this person take on this project?",
         type: "Criterion",
@@ -69,6 +75,7 @@ const Questionnaire = () => {
         min_label: "total deadbeat",
       },
       {
+        id:6,
         sequence: 6.0,
         question: "Did this person try to avoid doing any task that was necessary?",
         type: "Criterion",
@@ -78,6 +85,7 @@ const Questionnaire = () => {
         min_label: "absolutely",
       },
       {
+        id:7,
         sequence: 7.0,
         question: "How many of the useful ideas did this person come up with?",
         type: "Criterion",
@@ -87,6 +95,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
+        id:8,
         sequence: 8.0,
         question: "What fraction of the coding did this person do?",
         type: "Criterion",
@@ -96,6 +105,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
+        id:9,
         sequence: 9.0,
         question: "What fraction of the documentation did this person write?",
         type: "Criterion",
@@ -105,6 +115,7 @@ const Questionnaire = () => {
         min_label: "20%-0%",
       },
       {
+        id:10,
         sequence: 10.0,
         question: "How important is this person to the team?",
         type: "Criterion",
@@ -151,7 +162,8 @@ const Questionnaire = () => {
     let updatedData = questionnaireData.data;
     for (let i=0; i< parseInt(itemQuantity); i++) {
     const newQuestion = {
-      sequence: questionnaireData.data.length + 1,
+      id: questionnaireData.data.slice(-1)[0].id + 1,
+      sequence: questionnaireData.data.slice(-1)[0].id + 1,
       question: "Type your question",
       type: selectedItemType,
       weight: 1,
@@ -171,57 +183,49 @@ const Questionnaire = () => {
 
   // function for removing the item
   const handleRemoveItem = (seq: number)=>{
-    let updatedData = questionnaireData.data.filter(q=> +q.sequence!== seq);
-    updatedData = updatedData.map((q) => ({
-      ...q,
-      sequence: q.sequence > seq ? q.sequence - 1 : q.sequence, // Adjust sequence for questions after the removed one
-    }));
+    let updatedData = questionnaireData.data.filter(q=> +q.id!== seq);
     setQuestionnaireData({...questionnaireData, data: [...updatedData] });
   }
   return (
-    <div className="container">
+    <div style={{width:"80%", margin:"auto"}}>
       <div>
         <h1 className="mt-4">{questionnaireData.title}</h1>
+        <div className="row" style={{alignItems:"center"}}>
         {/* Min Score Input */}
-        <div className="row m-2">
-          <div className="col-2">
+          <div className="col-3">
             Min item score:
             <input
               className="form-control"
               type="number"
               value={minScore}
               onChange={(e) => setMinScore(parseInt(e.target.value, 10))}
+              min={0}
               // Using parseInt to convert the input value to a number
             ></input>
           </div>
-        </div>
         {/* Max Score Input */}
-        <div className="row m-2">
-          <div className="col-2">
+        <div className="col-3">
             Max item score:
             <input
               className="form-control"
               type="number"
               value={maxScore}
               onChange={(e) => setMaxScore(parseInt(e.target.value, 10))}
+              min={0}
               // Using parseInt to convert the input value to a number
             ></input>
-          </div>
         </div>
         {/* Privacy Toggle */}
-        <div className="row m-2">
-          <div className="col-6">
+        <div className="col-3">
             Is this Teammate review private:{' '} 
             <input
               type="checkbox"
               checked={isReviewPrivate}
               onChange={() => setIsReviewPrivate(!isReviewPrivate)}
             />
-          </div>
         </div>
         {/* Update Parameters Button */}
-        <div className="row my-2">
-          <div className="col-6">
+        <div className="col-3">
             <button
               type="button"
               style={{ borderColor: "black" }}
@@ -229,30 +233,30 @@ const Questionnaire = () => {
             >
               Update questionnaire parameters
             </button>
-          </div>
+        </div>
         </div>
         <hr />
 
         {/* Display questionnaire items */}
-        <div className="row my-2" style={{paddingLeft:"15px",paddingRight:"15px",textAlign:"center"}}>
+        <div className="row" style={{textAlign:"center"}}>
           <h6 className="col-1">Sequence</h6>
           <h6 className="col-2">Question</h6>
           <h6 className="col-2">Type</h6>
           <h6 className="col-1">Weight</h6>
-          <h6 className="col-1">Text_area_size</h6>
-          <h6 className="col-2">Max_label</h6>
-          <h6 className="col-2">Min_label</h6>
+          <h6 className="col-1">Text Area Size</h6>
+          <h6 className="col-2">Max Label</h6>
+          <h6 className="col-2">Min Label</h6>
           <h6 className="col-1">Action</h6>
         </div>
         {/* Iterate over questions */}
         {questionnaireData.data.map((item) => {
           return (
-            <div className="row my-3" key={item.sequence}  style={{ border:"2px solid gray", padding:"15px",borderRadius:"7px"}}>
+            <div className="row my-3" key={item.sequence}  style={{ border:"2px solid gray", padding:"8px"}}>
               {/* Sequence number */}
               <div className="col-1">
                 <input
-                  className="form-control"
-                  style={{ borderColor: "black",width: "40px" }}
+                  className="form-control d-block mx-auto"
+                  style={{ borderColor: "black",width: "40px",}}
                   type="text"
                   value={item.sequence}
                   disabled
@@ -261,11 +265,8 @@ const Questionnaire = () => {
               {/* The Question Text field */}
               <div className="col-2">
                 <textarea
-                  className="form-control"
-                  style={{ borderColor: "black" }}
-                  // type="text"
-                  rows={item.question.length>=55?3:2}
-                  // cols={20}
+                  style={{ borderColor: "black",height:"auto",marginBottom:"0px",resize:"vertical",overflowY:"hidden" }}
+                  rows={2}
                   defaultValue={item.question}
                 ></textarea>
               </div>
@@ -288,7 +289,7 @@ const Questionnaire = () => {
               {/* The weight of the item chosen */}
               <div className="col-1">
                 <input
-                  className="form-control"
+                  className="form-control d-block mx-auto"
                   style={{ borderColor: "black", width:"60px"}}
                   type="number"
                   placeholder="1"
@@ -299,17 +300,16 @@ const Questionnaire = () => {
               {/* The text-area size of the item being added */}
               <div className="col-1">
                 <input
-                  className="form-control"
+                  className="form-control d-block mx-auto"
                   style={{ borderColor: "black",width:"70px" }}
                   type="text"
-                  // value={item.text_area_size}
                   defaultValue={item.text_area_size}
                 ></input>
               </div>
               {/* The maximum label you want to attach to that item */}
               <div className="col-2">
                 <input
-                  className="form-control"
+                  className="form-control d-block mx-auto"
                   style={{ borderColor: "black" }}
                   type="text"
                   defaultValue={item.max_label}
@@ -318,7 +318,7 @@ const Questionnaire = () => {
               {/* The minimum label you want to attach to that item */}
               <div className="col-2">
                 <input
-                  className="form-control"
+                  className="form-control d-block mx-auto"
                   style={{ borderColor: "black" }}
                   type="text"
                   defaultValue={item.min_label}
@@ -329,10 +329,10 @@ const Questionnaire = () => {
               <button
                 type="button"
                 className="btn btn-light"
-                style={{border:"1px solid gray"}}
-                onClick={()=> handleRemoveItem(item.sequence)}
+                style={{display:"block",margin:"auto"}}
+                onClick={()=> handleRemoveItem(item.id)}
               >
-                Remove
+                <img height="20" src="https://expertiza.ncsu.edu/assets/close-8a5d1b64ae50a63b14630b78411fcb0c2d2ed0d6eac7230b448b2824f08f6f68.png" alt="Close"/>
               </button>  
               </div>
             </div>
